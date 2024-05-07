@@ -9,7 +9,7 @@ app.engine('jsx', require('express-react-views').createEngine())
 app.use('/places', require('./controllers/places'))
 
 app.get('/', (req, res) => {
-    res.render('home')
+    res.render('error404')
 })
 
 app.get('*', (req, res) => {
