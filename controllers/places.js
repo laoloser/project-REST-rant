@@ -9,25 +9,24 @@ router.get('/new', (req, res) => {
     res.render('places/new')
   })
   
-  router.get('/:id', (req, res) => {
-    let id = Number(req.params.id)
-    if (isNaN(id)) {
-      res.render('error404')
-    }
-    else if (!places[id]) {
-      res.render('error404')
-    }
-    else {
-      res.render('places/show', { place: places[id], id})
-    }
-  })
+
+  router.get("/:id", (req, res) => {
+    let id = Number(req.params.id);
+    if (isNaN(id)) { 
+      res.render("error404");
+    } else if (!places[id]) { 
+      res.render("error404");
+    } else { 
+      res.render("places/show", { place: places[id], id: id }); 
+    } 
+  });
   
   router.put('/:id', (req, res) => {
-    let id = Number(req.params.id)
-    if (isNaN(id)) {
+    let i = Number(req.params.id)
+    if (isNaN(i)) {
         res.render('error404')
     }
-    else if (!places[id]) {
+    else if (!places[i]) {
         res.render('error404')
     }
     else {
@@ -44,23 +43,23 @@ router.get('/new', (req, res) => {
         }
   
         // Save the new data into places[id]
-        places[id] = req.body
-        res.redirect(`/places/${id}`)
+        places[i] = req.body
+        res.redirect(`/places/${i}`)
     }
   })
   
   
 
   router.get('/:id/edit', (req, res) => {
-    let id = Number(req.params.id)
-    if (isNaN(id)) {
+    let i = Number(req.params.id)
+    if (isNaN(i)) {
         res.render('error404')
     }
-    else if (!places[id]) {
+    else if (!places[i]) {
         res.render('error404')
     }
     else {
-      res.render('places/edit', { place: places[id] })
+      res.render('places/edit', { place: places[i], i})
     }
   })
 
