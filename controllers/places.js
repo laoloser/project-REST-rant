@@ -1,45 +1,45 @@
 const router = require('express').Router()
 const db = require('../models')
+const places = require('../models/places')
 
+// New Route
+router.get('/new', (req, res) => {
+  res.render('places/new')
+  })
+
+  // Index Route
 router.get('/', (req, res) => {
     db.Place.find()
     .then((places) => {
-      res.render('places/index', { places })
+      res.render('places/index', {places})
     })
     .catch(err => {
-      console.log(err) 
       res.render('error404')
     })
 })
 
-
+// Post Places Route
 router.post('/', (req, res) => {
-  db.Place.create(req.body)
+  function remove(obj) {
+    const result = {};
+    for (const key in obj) {
+      if (obj[key] !== "") {
+        result[key] = obj[key];
+      }
+    }
+    return result;
+  }
+  db.Place.create(remove(req.body))
   .then(() => {
       res.redirect('/places')
   })
   .catch(err => {
-    if (err && err.name == 'ValidationError') {
-      let message = 'Validation Error: '
-      for (var field in err.errors) {
-          message += `${field} was ${err.errors[field].value}. `
-          message += `${err.errors[field].message}`
-      }
-      console.log('Validation error message', message)
-      res.render('places/new', { message })
-  }
-  else {
+      console.log('err', err)
       res.render('error404')
-  }
   })
 })
 
-
-
-router.get('/new', (req, res) => {
-  res.render('places/new')
-})
-
+// Show Route
 router.get('/:id', (req, res) => {
   db.Place.findById(req.params.id)
   .populate('comments')
@@ -53,9 +53,11 @@ router.get('/:id', (req, res) => {
   })
 })
 
-
+// Create Comment
 router.post("/:id/comment", (req, res) => {
   console.log(req.body);
+
+  // Ensure that the stars field is correctly parsed as a number
   req.body.stars = parseFloat(req.body.stars);
   req.body.rant = req.body.rant ? true : false;
 
@@ -85,19 +87,24 @@ router.post("/:id/comment", (req, res) => {
       });
 });
 
-
-router.put('/:id', (req, res) => {
-  db.Place.findByIdAndUpdate(req.params.id, req.body)
-  .then(() => {
-      res.redirect(`/places/${req.params.id}`)
-  })
-  .catch(err => {
-      console.log('err', err)
-      res.render('error404')
-  })
+// Places Get id Stub 
+router.get('/:id', (req, res) => {
+  res.send('GET /places/:id stub')
 })
 
+// Places put id Stub
+router.put('/:id', (req, res) => {
+  db.Place.findByIdAndUpdate(req.params.id, req.body)
+      .then(() => {
+          res.redirect(`/places/${req.params.id}`)
+      })
+      .catch(err => {
+          console.log('err', err)
+          res.render('error404')
+      })
+})
 
+// Delete Route
 router.delete('/:id', (req, res) => {
   db.Place.findByIdAndDelete(req.params.id)
   .then(place => {
@@ -109,42 +116,27 @@ router.delete('/:id', (req, res) => {
   })
 })
 
+
+// Edit Route
 router.get('/:id/edit', (req, res) => {
   db.Place.findById(req.params.id)
   .then(place => {
-      res.render('places/edit', { place })
+    res.render('places/edit', { place })
   })
   .catch(err => {
-      res.render('error404')
+    res.render('error404')
   })
 })
 
+// Rant Route
 router.post('/:id/rant', (req, res) => {
   res.send('GET /places/:id/rant stub')
 })
 
-
+// Delete Stub
 router.delete('/:id/rant/:rantId', (req, res) => {
     res.send('GET /places/:id/rant/:rantId stub')
 })
 
+// Export
 module.exports = router
-
-
-
-  
-
-
-  
-
-  
-  
-
-
-
-
-  
-  
-
-
-
